@@ -26,9 +26,10 @@ public class MyGraphView extends View {
     int x, y, radius, centerX, centerY = 0;
     String colors1[] = {"00B8D4", "0091EA", "304FFE", "6200EA", "C51162", "d50000"};
     String colors[] = {"F06292", "EC407A", "E91E63", "D81B60", "C2185B", "AD1457"};
-    String colors2[]={"#4dd0e1","#26c6da","#00bcd4","#00acc1","#0097a7","#00838f"};
-    String colors3[]={"#26a69a","#009688","#00897b","#00796b","#00695c","#004d40"};
+    String colors2[] = {"#4dd0e1", "#26c6da", "#00bcd4", "#00acc1", "#0097a7", "#00838f"};
+    String colors3[] = {"#26a69a", "#009688", "#00897b", "#00796b", "#00695c", "#004d40"};
     private Rect r = new Rect();
+    private  boolean notAnimate = true;
 
 
     public MyGraphView(Context context) {
@@ -60,6 +61,9 @@ public class MyGraphView extends View {
         //paintGraph.setColor(Color.WHITE);
         paintGraph.setStrokeWidth(3);
     }
+    public  void setAnimState(boolean status){
+        notAnimate=status;
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -83,9 +87,9 @@ public class MyGraphView extends View {
             Log.wtf("sector", sector + "");
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    rate = sector;
-                    invalidate();
-                    return true;
+                rate = sector;
+                invalidate();
+                return true;
 
             }
             return true;
@@ -106,33 +110,45 @@ public class MyGraphView extends View {
         Log.w("width", " radius " + radius + " - x " + x + " y" + y);
         Paint paint = new Paint();
         paint.setAntiAlias(true);
-        paint.setStyle(Paint.Style.FILL);
 
 
         // canvas.drawCircle(x / 2, y / 2, radius, paint);
         RectF rectF = new RectF(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
         //canvas.drawOval(rectF, paint);
 
-        paint.setColor(Color.parseColor("#00ff00"));
-        for (int i = 0; i < sectors; i++) {
-            paint.setColor(Color.parseColor("" + colors3[i]));
-            canvas.drawArc(rectF, sectorAngle * i, sectorAngle, true, paint);
+        /* // create outer circle border
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(10);
+        paint.setColor(Color.parseColor("#000000"));
+        canvas.drawCircle(centerX,centerY,radius, paint);
+        */
+
+        if (notAnimate) {
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.parseColor("#00ff00"));
+            for (int i = 0; i < sectors; i++) {
+                paint.setColor(Color.parseColor("" + colors3[i]));
+                canvas.drawArc(rectF, sectorAngle * i, sectorAngle, true, paint);
+            }
+
+
+            paint.setColor(Color.parseColor("#000000"));
+            canvas.drawCircle(centerX, centerY, radius / 3, paint);
+
+            paint.setColor(Color.parseColor("#00E5FF"));
+            canvas.drawCircle(centerX, centerY, radius / 3 - 5, paint);
+
+            paint.setColor(Color.parseColor("#000000"));
+            canvas.drawCircle(centerX, centerY, radius / 3 - 7, paint);
+
+            paint.setColor(Color.parseColor("#00E5FF"));
+            paint.setTextSize(30);
+            drawCenter(canvas, paint, rate + "");
+            // canvas.drawText("6", x / 2, y / 2, paint);
+        }else{
+            paint.setColor(Color.parseColor("#26A69A"));
+            canvas.drawCircle(centerX, centerY, radius/2, paint);
         }
-
-
-        paint.setColor(Color.parseColor("#000000"));
-        canvas.drawCircle(x / 2, y / 2, radius / 3, paint);
-
-        paint.setColor(Color.parseColor("#00E5FF"));
-        canvas.drawCircle(x / 2, y / 2, radius / 3 - 5, paint);
-
-        paint.setColor(Color.parseColor("#000000"));
-        canvas.drawCircle(x / 2, y / 2, radius / 3 - 7, paint);
-
-        paint.setColor(Color.parseColor("#00E5FF"));
-        paint.setTextSize(30);
-        drawCenter(canvas, paint, rate + "");
-        // canvas.drawText("6", x / 2, y / 2, paint);
     }
 
     @Override
@@ -144,8 +160,7 @@ public class MyGraphView extends View {
         int widthWithoutPadding = width - getPaddingLeft() - getPaddingRight();
         int heigthWithoutPadding = height - getPaddingTop() - getPaddingBottom();
 
-        int sqwidth=Math.min(widthWithoutPadding,heigthWithoutPadding);
-
+        int sqwidth = Math.min(widthWithoutPadding, heigthWithoutPadding);
 
 
         setMeasuredDimension(sqwidth, sqwidth);

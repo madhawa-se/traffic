@@ -12,6 +12,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,6 +40,7 @@ public class overlayed extends AppCompatActivity implements OnMapReadyCallback {
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         context = getApplicationContext();
+
 
 
     }
@@ -71,19 +75,20 @@ public class overlayed extends AppCompatActivity implements OnMapReadyCallback {
 
             @Override
             public boolean onMarkerClick(Marker marker) {
-                Log.i("gggggggggggggggggggg", "nooooooooooooooooooooooooooooooooo");
 
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(overlayed.this, R.style.MyAlertDialogStyle);
+                LayoutInflater inflater =getLayoutInflater();
+                View dilogView = inflater.inflate(R.layout.activity_ustom, null);
 
                 builder.setTitle("Rate the traffic");
-                builder.setView(R.layout.activity_ustom);
+                builder.setView(dilogView);
                 // builder.setPositiveButton("Rate", null);
                 //builder.setNegativeButton("Cancel", null);
 
 
                 TextView title = new TextView(overlayed.this);
-// You Can Customise your Title here
+                // You Can Customise your Title here
                 title.setText("Rate the traffic");
                 //title.setBackgroundColor(Color.DKGRAY);
                 title.setPadding(10, 5, 5, 5);
@@ -92,6 +97,19 @@ public class overlayed extends AppCompatActivity implements OnMapReadyCallback {
                 title.setTextSize(20);
 
                 //builder.setCustomTitle(title);
+
+                Button rateButton = (Button) dilogView.findViewById (R.id.button1);
+                Button graphButton = (Button) dilogView.findViewById (R.id.button3);
+                final MyGraphView MyGraphView = (MyGraphView) dilogView.findViewById (R.id.dialogButtonOK);
+                //dilogView.serA
+                rateButton.setOnClickListener(new View.OnClickListener() {
+
+                    public void onClick(View v) {
+                        Log.wtf("button clicked","yes");
+                        MyGraphView.setAnimState(false);
+                        MyGraphView.invalidate();
+                    }
+                });
 
 
                 builder.show();
