@@ -1,29 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
-
+    android:layout_height="wrap_content" >
     <ImageView
-        android:id="@+id/image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="5dp" />
-
-    <TextView
-        android:id="@+id/text"
+        android:id="@+id/imgLine"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFF"
-        android:layout_toRightOf="@+id/image"/>/>
-
-    <Button
-        android:id="@+id/dialogButtonOK"
-        android:layout_width="100px"
-        android:layout_height="wrap_content"
-        android:text=" Ok "
+        android:layout_height="2dp"
         android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_below="@+id/image"
+        android:layout_marginLeft="@dimen/underline_margin"
+        android:layout_marginRight="@dimen/underline_margin"
+        android:background="#009688"
         />
+    <com.example.user.drawcircle.MyGraphView
+        android:id="@+id/dialogButtonOK"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imgLine"
+        android:background="@color/dialog_color"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="20dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_below="@+id/dialogButtonOK"
+        >
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.Button"
+            android:text="Rate" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.Button"
+            android:text="Cancel" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.Button"
+            android:text="History" />
+    </LinearLayout>
+
 
 </RelativeLayout>

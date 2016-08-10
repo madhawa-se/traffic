@@ -20,7 +20,14 @@ public class MyGraphView extends View {
     Paint paintBackground;
     Paint paintGraph;
     Context myContext;
-    int rate=6;
+    int rate = 6;
+    int sectors = 6;
+    int sectorAngle;
+    int x, y, radius, centerX, centerY = 0;
+    String colors1[] = {"00B8D4", "0091EA", "304FFE", "6200EA", "C51162", "d50000"};
+    String colors[] = {"F06292", "EC407A", "E91E63", "D81B60", "C2185B", "AD1457"};
+    String colors2[]={"#4dd0e1","#26c6da","#00bcd4","#00acc1","#0097a7","#00838f"};
+    String colors3[]={"#26a69a","#009688","#00897b","#00796b","#00695c","#004d40"};
     private Rect r = new Rect();
 
 
@@ -39,7 +46,9 @@ public class MyGraphView extends View {
         init(context);
     }
 
-    private void init(Context c){
+    private void init(Context c) {
+
+        sectorAngle = 360 / sectors;
         myContext = c;
 
         paintBackground = new Paint();
@@ -48,7 +57,7 @@ public class MyGraphView extends View {
 
         paintGraph = new Paint();
         paintGraph.setStyle(Paint.Style.STROKE);
-        paintGraph.setColor(Color.WHITE);
+        //paintGraph.setColor(Color.WHITE);
         paintGraph.setStrokeWidth(3);
     }
 
@@ -57,79 +66,89 @@ public class MyGraphView extends View {
         float eventX = event.getX();
         float eventY = event.getY();
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
+        x = getWidth();
+        y = getHeight();
+        int radius = (int) Math.sqrt((eventY - centerY) * (eventY - centerY) + (eventX - centerX) * (eventX - centerX));
+        if (radius < this.radius) {
+            double radian = Math.atan2((eventY - centerY), eventX - centerX);
+            double degrees = (radian * 180) / Math.PI;
+            double angle = 0;
+            if (degrees < 0) {
+                angle = 360 + degrees;
+            } else {
+                angle = degrees;
+            }
+            int sector = (int) (angle / sectorAngle) + 1;
 
-                rate++;
-                invalidate();
-                final Dialog dialog = new Dialog(myContext);
-                dialog.setContentView(R.layout.activity_ustom);
-                dialog.setTitle("Title...");
-                dialog.show();
-                return true;
-            case MotionEvent.ACTION_MOVE:
-                break;
-            case MotionEvent.ACTION_UP:
-                // nothing to do
-                break;
-            default:
-                return false;
+            Log.wtf("sector", sector + "");
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    rate = sector;
+                    invalidate();
+                    return true;
+
+            }
+            return true;
         }
         return true;
+
     }
 
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        int x = getWidth();
-        int y = getHeight();
-        int radius=(Math.min(x,y)-100)/2;
-        Log.w("width"," radius "+radius+" - x "+x+" y"+y);
+        x = getWidth();
+        y = getHeight();
+        radius = (Math.min(x, y) - 50) / 2;
+        centerX = x / 2;
+        centerY = y / 2;
+        Log.w("width", " radius " + radius + " - x " + x + " y" + y);
         Paint paint = new Paint();
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.parseColor("#000000"));
-        canvas.drawPaint(paint);
-        // Use Color.parseColor to define HTML colors
 
-       // canvas.drawCircle(x / 2, y / 2, radius, paint);
-        RectF rectF = new RectF(x / 2-radius, y / 2-radius, x / 2+radius, y / 2+radius);
+
+        // canvas.drawCircle(x / 2, y / 2, radius, paint);
+        RectF rectF = new RectF(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
         //canvas.drawOval(rectF, paint);
 
-        paint.setColor(Color.parseColor("#64B5F6"));
-        canvas.drawArc (rectF, 0, 60, true, paint);
-
-        paint.setColor(Color.parseColor("#42A5F5"));
-        canvas.drawArc (rectF, 60, 60, true, paint);
-
-        paint.setColor(Color.parseColor("#2196F3"));
-        canvas.drawArc (rectF, 120, 60, true, paint);
-
-        paint.setColor(Color.parseColor("#1E88E5"));
-        canvas.drawArc (rectF, 180, 60, true, paint);
-
-        paint.setColor(Color.parseColor("#1976D2"));
-        canvas.drawArc (rectF, 240, 60, true, paint);
-
-        paint.setColor(Color.parseColor("#1565C0"));
-        canvas.drawArc (rectF, 300, 60, true, paint);
-
+        paint.setColor(Color.parseColor("#00ff00"));
+        for (int i = 0; i < sectors; i++) {
+            paint.setColor(Color.parseColor("" + colors3[i]));
+            canvas.drawArc(rectF, sectorAngle * i, sectorAngle, true, paint);
+        }
 
 
         paint.setColor(Color.parseColor("#000000"));
-        canvas.drawCircle(x / 2, y / 2, radius/3, paint);
+        canvas.drawCircle(x / 2, y / 2, radius / 3, paint);
 
-        paint.setColor(Color.parseColor("#4DD0E1"));
-        canvas.drawCircle(x / 2, y / 2, radius/3-5, paint);
+        paint.setColor(Color.parseColor("#00E5FF"));
+        canvas.drawCircle(x / 2, y / 2, radius / 3 - 5, paint);
 
         paint.setColor(Color.parseColor("#000000"));
-        canvas.drawCircle(x / 2, y / 2, radius/3-8, paint);
+        canvas.drawCircle(x / 2, y / 2, radius / 3 - 7, paint);
 
-        paint.setColor(Color.parseColor("#00E676"));
+        paint.setColor(Color.parseColor("#00E5FF"));
         paint.setTextSize(30);
-        drawCenter(canvas,paint,rate+"");
-       // canvas.drawText("6", x / 2, y / 2, paint);
+        drawCenter(canvas, paint, rate + "");
+        // canvas.drawText("6", x / 2, y / 2, paint);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+        int width = getMeasuredWidth();
+        int height = getMeasuredHeight();
+        int widthWithoutPadding = width - getPaddingLeft() - getPaddingRight();
+        int heigthWithoutPadding = height - getPaddingTop() - getPaddingBottom();
+
+        int sqwidth=Math.min(widthWithoutPadding,heigthWithoutPadding);
+
+
+
+        setMeasuredDimension(sqwidth, sqwidth);
     }
 
     private void drawCenter(Canvas canvas, Paint paint, String text) {
@@ -142,7 +161,6 @@ public class MyGraphView extends View {
         float y = cHeight / 2f + r.height() / 2f - r.bottom;
         canvas.drawText(text, x, y, paint);
     }
-
 
 
 }
